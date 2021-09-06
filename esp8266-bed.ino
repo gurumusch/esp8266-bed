@@ -7,7 +7,6 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 #include <ESP8266WiFi.h>
-//#include <ESP8266WiFiMulti.h>
 #include <PubSubClient.h>
 #include <WiFiClient.h>
 #include <Adafruit_NeoPixel.h>
@@ -52,13 +51,11 @@ int incomingByte = 0;
 bool ensureWiFiConnection() {
   if (WiFi.status() != WL_CONNECTED) {
     WiFi.mode(WIFI_STA);
-//    WiFiMulti.addAP(wifiSsid, wifiPassword);
     Serial.print("Connecting to WiFi ");
     Serial.print(wifiSsid);
     Serial.print(" ");
     WiFi.begin(wifiSsid, wifiPassword);
 
-//    while (WiFiMulti.run() != WL_CONNECTED) {
     for (uint8_t i = 0; i < 20; i++) {
       if (WiFi.status() == WL_CONNECTED) {
         break;
@@ -204,16 +201,6 @@ void writeConfig() {
   start += MQTT_TOPIC_SIZE;
   writeEEPROM(mqttTopicMotion, start, MQTT_TOPIC_SIZE);
   start += MQTT_TOPIC_SIZE;
-
-  Serial.println(wifiSsid);
-  Serial.println(wifiPassword);
-  Serial.println(mqttBroker);
-  Serial.println(mqttUser);
-  Serial.println(mqttPassword);
-  Serial.println(mqttClient);
-  Serial.println(mqttTopicDistance);
-  Serial.println(mqttTopicColor);
-  Serial.println(mqttTopicMotion);
 }
 
 void loadConfig() {
@@ -236,16 +223,6 @@ void loadConfig() {
   start += MQTT_TOPIC_SIZE;
   readEEPROM(mqttTopicMotion, start, MQTT_TOPIC_SIZE);
   start += MQTT_TOPIC_SIZE;
-
-  Serial.println(wifiSsid);
-  Serial.println(wifiPassword);
-  Serial.println(mqttBroker);
-  Serial.println(mqttUser);
-  Serial.println(mqttPassword);
-  Serial.println(mqttClient);
-  Serial.println(mqttTopicDistance);
-  Serial.println(mqttTopicColor);
-  Serial.println(mqttTopicMotion);
 }
 
 void writeEEPROM(char* value, int startAt, uint8_t len) {
@@ -370,7 +347,6 @@ void loop() {
   checkIncomingSerial();
 
   // wait for WiFi connection
-  //if ((WiFiMulti.run() == WL_CONNECTED)) {
   if (ensureWiFiConnection()) {
     if (ensureMQTTConnection()) {
       //    byte state = digitalRead(D0);
