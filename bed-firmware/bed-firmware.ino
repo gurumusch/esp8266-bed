@@ -1,5 +1,5 @@
 /**
-   bed.ino
+   bed-firmware.ino
 
     Created on: 29.08.2021
 */
