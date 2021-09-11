@@ -1,0 +1,11 @@
+port.b = false;
+port.c = false;
+port.d = false;
+mem.var = math.random(3);
+if mem.var == 1 then
+  port.b = pin.a;
+elseif mem.var == 2 then
+  port.c = pin.a;
+elseif mem.var == 3 then
+  port.d = pin.a;
+end
