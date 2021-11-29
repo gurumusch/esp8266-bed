@@ -24,10 +24,15 @@
 #define RIGHT_PIR_0_PIN D2
 #define RIGHT_PIR_1_PIN D3
 
+#define LEFT_PIR_0_PIN D5
+#define LEFT_PIR_1_PIN D6
+
+#define BOTTOM_PIR_PIN D7
+
 #define ULTRASOUND_TRIGGER_PIN D0
 #define ULTRASOUND_ECHO_PIN D1
 
-#define NEOPIXEL_PIN D5
+#define NEOPIXEL_PIN D4
 
 #define PAYLOAD_SIZE 100
 char payload[PAYLOAD_SIZE + 1];
@@ -397,8 +402,12 @@ uint16_t readIntegerFromEEPROM(uint16_t startAt) {
 void setup() {
   pinMode(RIGHT_PIR_0_PIN, INPUT);
   pinMode(RIGHT_PIR_1_PIN, INPUT);
-  pinMode(ULTRASOUND_TRIGGER_PIN, OUTPUT);
-  pinMode(ULTRASOUND_ECHO_PIN, INPUT);
+  pinMode(LEFT_PIR_0_PIN, INPUT);
+  pinMode(LEFT_PIR_1_PIN, INPUT);
+  pinMode(BOTTOM_PIR_PIN, INPUT);
+  
+  //pinMode(ULTRASOUND_TRIGGER_PIN, OUTPUT);
+  //pinMode(ULTRASOUND_ECHO_PIN, INPUT);
 
   Serial.begin(9600);
 
@@ -433,7 +442,18 @@ void loop() {
   // wait for WiFi connection
   if (ensureWiFiConnection()) {
     if (ensureMQTTConnection()) {
-      //    byte state = digitalRead(D0);
+      byte state0 = digitalRead(RIGHT_PIR_0_PIN);
+      byte state1 = digitalRead(RIGHT_PIR_1_PIN);
+      byte state2 = digitalRead(LEFT_PIR_0_PIN);
+      byte state3 = digitalRead(LEFT_PIR_1_PIN);
+      byte state4 = digitalRead(BOTTOM_PIR_PIN);
+      uint16_t state = (state4 * 10000) + (state3 * 1000) + (state2 * 100) + (state1 * 10) + state0;
+      sprintf(payload, "%d%d%d%d%d", state0, state1, state2, state3, state4);
+      mqtt.publish(mqttTopicMotion, payload);
+      Serial.print("MQTT[");
+      Serial.print(mqttTopicMotion);
+      Serial.print("] <- ");
+      Serial.println(payload);
       //    if(state == 1)Serial.print("D0: yes / ");
       //    else if(state == 0)Serial.print("D0: no / ");
       //
@@ -460,7 +480,7 @@ void loop() {
       measureDistance();
   
       mqtt.loop();
-      delay(2500);
+      delay(1000);
     }
     else {
     Serial.println("Not connected to MQTT. Waiting 10 seconds");

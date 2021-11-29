@@ -51,7 +51,7 @@ module clip(
     }
 }
 
-//rotate([90, 0, 0])
+rotate([90, 0, 0])
 clip(
     /* cutout_dimensions    */ [19, 18, 13.6],
     /* bottom_side_border   */ 5,
